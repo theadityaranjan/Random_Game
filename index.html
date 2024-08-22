@@ -1,61 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Guess</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    
+    <style>
+        body {
+            background-image: url('num.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            transition: transform 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .alert-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        #submit {
+            background-color: #28a745;
+            border: none;
+            transition: background-color 0.3s;
+            animation: pulse 2s infinite;
+        }
+
+        #submit:hover {
+            background-color: #218838;
+        }
+
+        #submit:active {
+            animation: bounce 0.5s;
+        }
+
+        #reset {
+            background-color: #dc3545;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        #reset:hover {
+            background-color: #c82333;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .alert-success {
+            animation: bounce 1s;
+        }
+
+        .alert-danger {
+            animation: shake 0.5s;
+        }
+
+        .progress {
+            margin-top: 10px;
+            height: 25px;
+            background-color: #e9ecef;
+        }
+
+        #progress-bar {
+            transition: width 0.5s ease-in-out, background-color 0.5s;
+        }
+
+        #gif {
+            max-width: 100%;
+            height: auto;
+            margin-top: 15px;
+            display: none;
+        }
+
+        #hint {
+            font-size: 1rem;
+            margin-top: 10px;
+            color: #6c757d;
+        }
+
+        .indicator {
+            margin-top: 10px;
+            height: 5px;
+            background-color: #28a745;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Keyframes for a pulse effect */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Keyframes for a bounce effect */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Keyframes for a shake effect */
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            20%, 60% {
+                transform: translateX(-10px);
+            }
+            40%, 80% {
+                transform: translateX(10px);
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <div class="container text-center">
+    <div class="container text-center mt-5">
         <div class="alert alert-primary" role="alert">
-            <h1>Random Guess </h1>
-          </div>
-          <div class="d-flex justify-content-center">
-              <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Input Your Number between 1 to 100</h5>
-                   <input type="number" id="user-input" class="form-control">
-                  <button class="btn btn-primary mt-2" id="submit" onclick="guess_num()">Submit Guess</button>
-                </div>
-                <div id = "result"></div>
-              </div>
-
-            </div>
-          
-
+            <h1>Random Guess</h1>
         </div>
+        <div class="d-flex justify-content-center">
+            <div class="card" style="width: 22rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Input Your Number between 1 to 100</h5>
+                    <input type="number" id="user-input" class="form-control" placeholder="Enter your guess">
+                    <button class="btn btn-primary mt-3" id="submit" onclick="guess_num()">Submit Guess</button>
+                    <button class="btn btn-danger mt-3 d-none" id="reset" onclick="reset_game()">Play Again</button>
+                    <div id="result" class="mt-3"></div>
+                    <div id="score" class="mt-3">Attempts: 0</div>
+                    <div class="progress mt-3">
+                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div id="hint"></div>
+                    <div class="indicator"></div>
+                    <img id="gif" src="" alt="GIF animation">
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <script>
-            let randomnumber = Math.floor(Math.random()*101)
-            function guess_num(){
-            let result = document.getElementById('result')
-            let submit = document.getElementById('submit')
-            const guess = Number(document.getElementById('user-input').value)
-                          console.log(guess)
-           if(guess === randomnumber){
-            result.textContent = 'Success'
-            result.className='alert alert-success'
-            submit.disabled = true
-            console.log('Success')
-           }
-           else if (guess < randomnumber){
-            result.textContent = 'Small'
-             result.className='alert alert-danger'
-            console.log('Small')
-           }
-           else{
-             result.textContent = 'Large'
-            result.className='alert alert-danger'
-            console.log('Large')
-           }
-           
-            // console.log(randomnumber)
+    <script>
+        let randomnumber = Math.floor(Math.random() * 101);
+        let attempts = 0;
+        let min = 1;
+        let max = 100;
+
+        function guess_num() {
+            let result = document.getElementById('result');
+            let submit = document.getElementById('submit');
+            let reset = document.getElementById('reset');
+            let progressBar = document.getElementById('progress-bar');
+            let gif = document.getElementById('gif');
+            let hint = document.getElementById('hint');
+            let indicator = document.querySelector('.indicator');
+            const guess = Number(document.getElementById('user-input').value);
+
+            attempts++;
+            document.getElementById('score').textContent = 'Attempts: ' + attempts;
+
+            result.style.opacity = 1;
+
+            let difference = Math.abs(randomnumber - guess);
+            progressBar.style.width = `${100 - difference}%`;
+
+            if (difference <= 10) {
+                progressBar.style.backgroundColor = '#ffc107'; // Yellow for close guesses
+                hint.textContent = 'You\'re getting close!';
+            } else {
+                progressBar.style.backgroundColor = '#28a745'; // Green for far guesses
+                hint.textContent = '';
+            }
+
+            if (guess === randomnumber) {
+                result.textContent = 'Success!';
+                result.className = 'alert alert-success';
+                submit.disabled = true;
+                reset.classList.remove('d-none');
+                gif.src = 'https://media.giphy.com/media/l0Exk8EUzSLsrErEQ/giphy.gif'; // Celebration GIF
+                gif.style.display = 'block';
+                hint.textContent = '';
+            } else if (guess < randomnumber) {
+                result.textContent = 'Too Low';
+                result.className = 'alert alert-danger';
+                gif.src = 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif'; // Too Low GIF
+                gif.style.display = 'block';
+                min = Math.max(min, guess + 1);
+                indicator.style.width = `${(randomnumber - min) / (max - min) * 100}%`;
+            } else {
+                result.textContent = 'Too High';
+                result.className = 'alert alert-danger';
+                gif.src = 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif'; // Too High GIF
+                gif.style.display = 'block';
+                max = Math.min(max, guess - 1);
+                indicator.style.width = `${(randomnumber - min) / (max - min) * 100}%`;
+            }
         }
-        </script>
+
+        function reset_game() {
+            randomnumber = Math.floor(Math.random() * 101);
+            attempts = 0;
+            min = 1;
+            max = 100;
+            document.getElementById('user-input').value = '';
+            document.getElementById('result').style.opacity = 0;
+            document.getElementById('score').textContent = 'Attempts: 0';
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-bar').style.backgroundColor = '#28a745';
+            document.getElementById('submit').disabled = false;
+            document.getElementById('reset').classList.add('d-none');
+            document.getElementById('gif').style.display = 'none';
+            document.getElementById('hint').textContent = '';
+            document.querySelector('.indicator').style.width = '100%';
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
+
 </html>
